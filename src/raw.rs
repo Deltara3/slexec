@@ -1,5 +1,5 @@
 #[cfg(windows)]
-mod win32 {
+pub mod win32 {
     use std::ptr;
     use std::ffi::{c_void, CStr};
     use std::os::raw::{c_char, c_int, c_ulong};
