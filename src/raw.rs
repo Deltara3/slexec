@@ -39,6 +39,7 @@ pub mod win32 {
                                      arugments: *mut c_void) -> c_ulong;
 
         /// Frees the specified local memory object.
+        #[link_name = "LocalFree"]
         unsafe fn local_free(mem: *mut c_void) -> *mut c_void;
     }
 
