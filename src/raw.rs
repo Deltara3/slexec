@@ -44,12 +44,12 @@ pub mod win32 {
 
     /// Retrieves the calling thread's last-error code in a human readable format.
     pub unsafe fn get_last_human_error() -> String {
-        let mut buf: *mut c_char = ptr::null_mut();
-        let flags = FM_ALLOCATE_BUFFER | FM_IGNORE_INSERTS | FM_FROM_SYSTEM;
+        unsafe {
+            let mut buf: *mut c_char = ptr::null_mut();
+            let flags = FM_ALLOCATE_BUFFER | FM_IGNORE_INSERTS | FM_FROM_SYSTEM;
 
-        // Attempt to get the human message.
-        let len = unsafe {
-            format_message(
+            // Attempt to get the human message.
+            let len = format_message(
                 flags,
                 ptr::null(),
                 get_last_error(),
@@ -57,20 +57,20 @@ pub mod win32 {
                 &mut buf,
                 0,
                 ptr::null_mut()
-            )
-        };
+            );
 
-        // If there is none, provide a default.
-        if len == 0 || buf.is_null() {
-            return format!("An unknown error occured");
+            // If there is none, provide a default.
+            if len == 0 || buf.is_null() {
+                return format!("An unknown error occured");
+            }
+
+            // Convert buffer to a native Rust string.
+            let msg = CStr::from_ptr(buf).to_string_lossy().into_owned();
+
+            // Free the buffer that was allocated by FormatMessage, assume success.
+            local_free(buf as *mut c_void);
+
+            return msg.trim().to_owned();
         }
-
-        // Convert buffer to a native Rust string.
-        let msg = unsafe { CStr::from_ptr(buf).to_string_lossy().into_owned() };
-
-        // Free the buffer that was allocated by FormatMessage, assume success.
-        unsafe { local_free(buf as *mut c_void); }
-
-        return msg.trim().to_owned();
     }
 }
