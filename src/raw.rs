@@ -1,8 +1,7 @@
 #[cfg(windows)]
 pub mod win32 {
     use std::ptr;
-    use std::ffi::{c_void, CStr};
-    use std::os::raw::{c_char, c_int, c_ulong};
+    use std::ffi::{CStr, c_void, c_char, c_int, c_ulong};
 
     const FM_ALLOCATE_BUFFER: c_ulong = 0x00000100;
     const FM_IGNORE_INSERTS: c_ulong  = 0x00000200;
