@@ -1,7 +1,7 @@
 [magenta]{name}[reset] - [yellow]{version}[reset]
 {description}
 
-[green]usage[reset]: [magenta]{name}[reset] [cyan]--module[reset] [blue]PATH[reset] [cyan]--function[reset] [blue]NAME[reset] [[cyan]--pass[reset] [blue]ARGS[reset]] [[cyan]--debug[reset]]
+[green]usage[reset]: [magenta]{name}[reset] [cyan]--module[reset] [blue]PATH[reset] [cyan]--function[reset] [blue]NAME[reset] [[cyan]--pass[reset] [blue]ARGS[reset]]
 
 [green]options[reset]:
 [cyan]-h[reset], [cyan]--help[reset]             print help information and exit

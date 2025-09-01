@@ -1,13 +1,11 @@
 use std::env;
-use std::ptr;
-use std::ffi::{CString, c_char};
 use std::process::exit;
 
 /// Argument parsing struct.
 pub struct Args {
     pub module: String,
     pub function: String,
-    pub arguments: Vec<*const c_char>
+    pub arguments: Vec<String>
 }
 
 impl Args {
@@ -20,7 +18,7 @@ impl Args {
         let mut help                             = false;
         let mut module: Option<String>           = None;
         let mut function: Option<String>         = None;
-        let mut pass: Option<Vec<*const c_char>> = None;
+        let mut pass: Option<Vec<String>> = None;
 
         // Iterate over arguments.
         while let Some(arg) = args.next() {
@@ -51,16 +49,11 @@ impl Args {
                 "-p" | "--pass" => {
                     match Args::parse_value("-p/--pass", args.next()) {
                         Ok(value) => {
-                            let data: Vec<CString> = value.split(',')
-                                            .map(|s| CString::new(s).unwrap())
+                            let data: Vec<String> = value.split(',')
+                                            .map(|s| String::from(s))
                                             .collect();
 
-                            let mut data_ptrs: Vec<*const c_char> = data.iter()
-                                                                        .map(|s| s.as_ptr())
-                                                                        .collect();
-
-                            data_ptrs.push(ptr::null());
-                            pass = Some(data_ptrs);
+                            pass = Some(data);
                         },
                         Err(error) => {
                             return Err(error);
@@ -93,7 +86,7 @@ impl Args {
             Ok(Self {
                 module: module.unwrap(),
                 function: function.unwrap(),
-                arguments: pass.unwrap_or(vec![ptr::null()])
+                arguments: pass.unwrap_or(vec![])
             })
         }
     }
