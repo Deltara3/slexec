@@ -1,12 +1,11 @@
 #[cfg(target_os = "windows")]
 use crate::raw::win32;
-use std::ffi::{CString, c_void};
+use std::ffi::{CString, c_void, c_char};
 use std::mem;
 
 /// Wrapper around a dynamic-link library.
 pub struct Library {
-    handle: *mut c_void,
-    debug: bool
+    handle: *mut c_void
 }
 
 impl Library {
@@ -26,11 +25,11 @@ impl Library {
                 return Err(win32::get_last_human_error());
             }
 
-            Ok(Library { handle, debug: false })
+            Ok(Library { handle })
         }
     }
 
-    pub fn get(&self, name: &str) -> Result<extern "C" fn(), String> {
+    pub fn get(&self, name: &str) -> Result<extern "C" fn(*const *const c_char), String> {
         unsafe {
             // Convert Rust string to C string.
             let c_name = CString::new(name).unwrap();
@@ -46,15 +45,10 @@ impl Library {
             }
 
             // Transmute to function, this is really unsafe as we assume everything matches.
-            let func: extern "C" fn() = mem::transmute(ptr);
+            let func: extern "C" fn(*const *const c_char) = mem::transmute(ptr);
 
             Ok(func)
         }
-    }
-
-    /// Enables debug writing this instance.
-    pub fn enable_debug(&mut self) {
-        self.debug = true;
     }
 }
 

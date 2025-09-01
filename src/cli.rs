@@ -7,8 +7,7 @@ use std::process::exit;
 pub struct Args {
     pub module: String,
     pub function: String,
-    pub arguments: Option<Vec<*const c_char>>,
-    pub debug: bool
+    pub arguments: Vec<*const c_char>
 }
 
 impl Args {
@@ -19,7 +18,6 @@ impl Args {
         // Temporary variables.
         let should_print                         = args.len() == 0;
         let mut help                             = false;
-        let mut debug                            = false;
         let mut module: Option<String>           = None;
         let mut function: Option<String>         = None;
         let mut pass: Option<Vec<*const c_char>> = None;
@@ -69,9 +67,6 @@ impl Args {
                         }
                     }
                 },
-                "-d" | "--debug" => {
-                    debug = true;
-                },
                 _ => {
                     return Err(format!("argument \x1b[33m{}\x1b[0m unknown", arg));
                 }
@@ -98,8 +93,7 @@ impl Args {
             Ok(Self {
                 module: module.unwrap(),
                 function: function.unwrap(),
-                arguments: pass,
-                debug: debug
+                arguments: pass.unwrap_or(vec![ptr::null()])
             })
         }
     }
