@@ -1,6 +1,6 @@
 #[cfg(target_os = "windows")]
 use crate::raw::win32;
-use std::ffi::{CString, c_void, c_int};
+use std::ffi::{CString, c_void};
 use std::mem;
 
 /// Wrapper around a dynamic-link library.
