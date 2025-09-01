@@ -1,4 +1,4 @@
-#[cfg(not(any(target_os = "windows")))]
+#[cfg(not(any(target_os = "windows", target_os = "linux")))]
 compile_error!("You are using a currently unsupported operating system.");
 
 /// Raw bindings to OS specific library loading functions.

@@ -65,12 +65,51 @@ pub mod win32 {
             }
 
             // Convert buffer to a native Rust string.
-            let msg = CStr::from_ptr(buf).to_string_lossy().into_owned();
+            let msg = CStr::from_ptr(buf).to_string_lossy()
+                                         .into_owned();
 
             // Free the buffer that was allocated by FormatMessage, assume success.
             local_free(buf as *mut c_void);
 
             return msg.trim().to_owned();
+        }
+    }
+}
+
+#[cfg(target_os = "linux")]
+pub mod unix {
+    use std::ffi::{CStr, c_void, c_char, c_int};
+
+    pub const RTLD_LAZY: c_int = 1;
+
+    #[link(name = "dl")]
+    unsafe extern "C" {
+        /// Loads a dynamic shared object.
+        pub unsafe fn dlopen(library_filename: *const c_char,
+                             flags: c_int) -> *mut c_void;
+        
+        /// Retrieves the address of an exported symbol in a library. 
+        pub unsafe fn dlsym(library_module: *mut c_void,
+                            symbol_name: *const c_char) -> *mut c_void;
+
+        /// Frees a loaded dynamic shared object.
+        pub unsafe fn dlclose(library_module: *mut c_void) -> c_int;
+
+        /// Retrieves the last error.
+        #[link_name = "dlerror"]
+        unsafe fn dlerror_internal() -> *const c_char;
+    }
+
+    /// Retrieves the last error and converts to a Rust string.
+    pub unsafe fn dlerror() -> String {
+        unsafe {
+            let error = dlerror_internal();
+
+            // Convert to native Rust string.
+            let msg = CStr::from_ptr(error).to_string_lossy()
+                                           .into_owned();
+
+            return msg;
         }
     }
 }
