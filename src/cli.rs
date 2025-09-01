@@ -1,12 +1,13 @@
 use std::env;
-use std::ffi::CString;
+use std::ptr;
+use std::ffi::{CString, c_char};
 use std::process::exit;
 
 /// Argument parsing struct.
 pub struct Args {
     pub module: String,
     pub function: String,
-    pub arguments: Option<Vec<CString>>,
+    pub arguments: Option<Vec<*const c_char>>,
     pub debug: bool
 }
 
@@ -16,12 +17,12 @@ impl Args {
         let mut args= env::args().skip(1);
         
         // Temporary variables.
-        let should_print                   = args.len() == 0;
-        let mut help                       = false;
-        let mut debug                      = false;
-        let mut module: Option<String>     = None;
-        let mut function: Option<String>   = None;
-        let mut pass: Option<Vec<CString>> = None;
+        let should_print                         = args.len() == 0;
+        let mut help                             = false;
+        let mut debug                            = false;
+        let mut module: Option<String>           = None;
+        let mut function: Option<String>         = None;
+        let mut pass: Option<Vec<*const c_char>> = None;
 
         // Iterate over arguments.
         while let Some(arg) = args.next() {
@@ -52,11 +53,16 @@ impl Args {
                 "-p" | "--pass" => {
                     match Args::parse_value("-p/--pass", args.next()) {
                         Ok(value) => {
-                            let data = value.split(',')
+                            let data: Vec<CString> = value.split(',')
                                             .map(|s| CString::new(s).unwrap())
                                             .collect();
 
-                            pass = Some(data);
+                            let mut data_ptrs: Vec<*const c_char> = data.iter()
+                                                                        .map(|s| s.as_ptr())
+                                                                        .collect();
+
+                            data_ptrs.push(ptr::null());
+                            pass = Some(data_ptrs);
                         },
                         Err(error) => {
                             return Err(error);
