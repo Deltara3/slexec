@@ -3,7 +3,7 @@ A cross-platform alternative to rundll32 on Windows.
 
 ## Support
 - [x] Windows
-- [ ] macOS
+- [x] macOS
 - [x] Linux
 
 ## Installation

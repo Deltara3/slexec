@@ -1,13 +1,13 @@
+#[cfg(any(target_os = "macos", target_os = "linux"))]
+use crate::raw::unix::{self, RTLD_LAZY};
 #[cfg(target_os = "windows")]
 use crate::raw::win32;
-#[cfg(target_os = "linux")]
-use crate::raw::unix::{self, RTLD_LAZY};
-use std::ffi::{CString, c_void, c_char};
+use std::ffi::{CString, c_char, c_void};
 use std::mem;
 
 /// Wrapper around a dynamic-link library.
 pub struct Library {
-    handle: *mut c_void
+    handle: *mut c_void,
 }
 
 impl Library {
@@ -21,7 +21,7 @@ impl Library {
             #[cfg(target_os = "windows")]
             let handle = win32::load_library(c_path.as_ptr());
 
-            #[cfg(target_os = "linux")]
+            #[cfg(any(target_os = "macos", target_os = "linux"))]
             let handle = unix::dlopen(c_path.as_ptr(), RTLD_LAZY);
 
             // If handle is null, exit.
@@ -29,7 +29,7 @@ impl Library {
                 #[cfg(target_os = "windows")]
                 return Err(win32::get_last_human_error());
 
-                #[cfg(target_os = "linux")]
+                #[cfg(any(target_os = "macos", target_os = "linux"))]
                 return Err(unix::dlerror());
             }
 
@@ -46,7 +46,7 @@ impl Library {
             #[cfg(target_os = "windows")]
             let ptr = win32::get_proc_address(self.handle, c_name.as_ptr());
 
-            #[cfg(target_os = "linux")]
+            #[cfg(any(target_os = "macos", target_os = "linux"))]
             let ptr = unix::dlsym(self.handle, c_name.as_ptr());
 
             // If symbol is null, exit.
@@ -54,7 +54,7 @@ impl Library {
                 #[cfg(target_os = "windows")]
                 return Err(win32::get_last_human_error());
 
-                #[cfg(target_os = "linux")]
+                #[cfg(any(target_os = "macos", target_os = "linux"))]
                 return Err(unix::dlerror());
             }
 
@@ -73,7 +73,7 @@ impl Drop for Library {
                 #[cfg(target_os = "windows")]
                 win32::free_library(self.handle);
 
-                #[cfg(target_os = "linux")]
+                #[cfg(any(target_os = "macos", target_os = "linux"))]
                 unix::dlclose(self.handle);
             }
         }
