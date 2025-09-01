@@ -4,10 +4,10 @@ use std::process::exit;
 
 /// Argument parsing struct.
 pub struct Args {
-    module: String,
-    function: String,
-    arguments: Option<Vec<CString>>,
-    debug: bool
+    pub module: String,
+    pub function: String,
+    pub arguments: Option<Vec<CString>>,
+    pub debug: bool
 }
 
 impl Args {
