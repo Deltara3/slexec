@@ -6,3 +6,6 @@ pub mod raw;
 
 /// Safe-ish bindings to the raw library loading bindings.
 pub mod wrap;
+
+/// CLI handler module.
+pub mod cli;

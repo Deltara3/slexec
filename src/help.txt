@@ -1,0 +1,11 @@
+[magenta]{name}[reset] - [yellow]{version}[reset]
+{description}
+
+[green]usage[reset]: [magenta]{name}[reset] [cyan]--module[reset] [blue]PATH[reset] [cyan]--function[reset] [blue]NAME[reset] [[cyan]--pass[reset] [blue]ARGS[reset]] [[cyan]--debug[reset]]
+
+[green]options[reset]:
+[cyan]-h[reset], [cyan]--help[reset]             print help information and exit
+[cyan]-m[reset], [cyan]--module[reset] [blue]PATH[reset]      dynamic-link module to load
+[cyan]-f[reset], [cyan]--function[reset] [blue]NAME[reset]    function to execute
+[cyan]-p[reset], [cyan]--pass[reset] [blue]ARGS[reset]        arguments to pass, separated by commas
+[cyan]-d[reset], [cyan]--debug[reset]            enables debug

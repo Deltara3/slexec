@@ -1,5 +1,6 @@
 [package]
 name = "slexec"
+description = "A cross-platform alternative to rundll32 on Windows."
 version = "0.1.0"
 edition = "2024"
 
